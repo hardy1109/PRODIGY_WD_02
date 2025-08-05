@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aesthetic Stopwatch</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: url('sky_1.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .stopwatch-container {
+      backdrop-filter: blur(15px);
+      background: rgba(255, 255, 255, 0.2);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 320px;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .stopwatch-time {
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 25px;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    }
+
+    .stopwatch-buttons button {
+      padding: 10px 16px;
+      margin: 6px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .start    { background: #28a745; color: white; }
+    .pause    { background: #ffc107; color: white; }
+    .reset    { background: #dc3545; color: white; }
+    .lap      { background: #007bff; color: white; }
+
+    .stopwatch-buttons button:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+
+    .laps {
+      margin-top: 25px;
+      max-height: 120px;
+      overflow-y: auto;
+      text-align: left;
+      scrollbar-width: none;
+    }
+
+    .laps p {
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(5px);
+      padding: 8px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #fff;
+      font-weight: bold; /* Lap text is now bold */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stopwatch-container">
+    <div class="stopwatch-time" id="display">00:00:00</div>
+    <div class="stopwatch-buttons">
+      <button class="start" onclick="startStopwatch()">Start</button>
+      <button class="pause" onclick="pauseStopwatch()">Pause</button>
+      <button class="reset" onclick="resetStopwatch()">Reset</button>
+      <button class="lap" onclick="recordLap()">Lap</button>
+    </div>
+    <div class="laps" id="laps"></div>
+  </div>
+
+  <script>
+    let [seconds, minutes, hours] = [0, 0, 0];
+    let timer = null;
+    let lapCount = 0;
+
+    function updateDisplay() {
+      const h = hours.toString().padStart(2, '0');
+      const m = minutes.toString().padStart(2, '0');
+      const s = seconds.toString().padStart(2, '0');
+      document.getElementById('display').innerText = `${h}:${m}:${s}`;
+    }
+
+    function stopwatch() {
+      seconds++;
+      if (seconds === 60) {
+        seconds = 0;
+        minutes++;
+        if (minutes === 60) {
+          minutes = 0;
+          hours++;
+        }
+      }
+      updateDisplay();
+    }
+
+    function startStopwatch() {
+      if (!timer) timer = setInterval(stopwatch, 1000);
+    }
+
+    function pauseStopwatch() {
+      clearInterval(timer);
+      timer = null;
+    }
+
+    function resetStopwatch() {
+      clearInterval(timer);
+      [seconds, minutes, hours] = [0, 0, 0];
+      updateDisplay();
+      document.getElementById('laps').innerHTML = '';
+      lapCount = 0;
+      timer = null;
+    }
+
+    function recordLap() {
+      if (timer) {
+        lapCount++;
+        const laps = document.getElementById('laps');
+        const lapTime = document.getElementById('display').innerText;
+        const lap = document.createElement('p');
+        lap.innerText = `Lap ${lapCount}: ${lapTime}`;
+        laps.appendChild(lap);
+      }
+    }
+  </script>
+
+</body>
+</html>
